@@ -18,7 +18,7 @@ function toManaCost(n: number): ManaCost {
     if (n >= 0) {
         return n as ManaCost
     } else {
-        return -n as ManaCost
+        throw new Error("mana cost must be non-negative")
     }
 }
 
@@ -85,19 +85,17 @@ function describeSchool(school: SpellSchool): string {
     }
 }
 
-function addSpellToSlot(spellBook: SpellBook, slot: Slot, spell: Spell): SpellBook {
-    const newSlot: Slot = { index: slot.index, spell }
-
-    spellBook.slots[slot.index] = newSlot
-
-    return spellBook
+function addSpellToSlot(spellBook: SpellBook, slotIndex: number, spell: Spell): SpellBook {
+    const newSlots = [...spellBook.slots];
+    newSlots[slotIndex] = { index: slotIndex, spell };
+    return { ...spellBook, slots: newSlots };
 }
 
 
 // test output
 
 const fireball: AttackSpell = {
-    id: "spell_001",
+    id: crypto.randomUUID(),
     name: "Fireball",
     school: SpellSchool.Fire,
     manaCost: toManaCost(18),
@@ -108,7 +106,7 @@ const fireball: AttackSpell = {
 }
 
 const blizzard: AttackSpell = {
-    id: "spell_002",
+    id: crypto.randomUUID(),
     name: "Blizzard",
     school: SpellSchool.Ice,
     manaCost: toManaCost(25),
@@ -119,7 +117,7 @@ const blizzard: AttackSpell = {
 }
 
 const heal: UtilitySpell = {
-    id: "spell_003",
+    id: crypto.randomUUID(),
     name: "Nature Heal",
     school: SpellSchool.Nature,
     manaCost: toManaCost(12),
@@ -146,7 +144,7 @@ console.log(castSpell(blizzard, 5))
 console.log(describeSchool(SpellSchool.Arcane))
 // → "Arcane magic bends reality itself"
 
-console.log(addSpellToSlot(spellBook, { index: 2 }, heal))
+console.log(addSpellToSlot(spellBook, 2, heal))
 
 spellBook.slots[0]
 // → { id: "f3a2...", name: "Fireball", school: "Fire", manaCost: 18, ... }
